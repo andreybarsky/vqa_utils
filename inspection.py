@@ -13,14 +13,10 @@ import os
 import pdb, ipdb
 
 from gui_utils import select_file
-from filepaths import imdb_dir, images_dir
+from filepaths import imdb_dir, images_dir, image_ext
 
-# # manually intercept argv to supply debug args:
-# sys.argv = ['train.py', '-d', 'PFL-DocVQA-local', '-m', 'VT5', ]# '--use_dp']
-
-
+# global config params, set to taste:
 FIG_SIZE = (6,8)
-
 ALWAYS_SHOW_BBOXES = True
 
 
@@ -38,9 +34,6 @@ def display_record(img_path, words, bboxes, qa_pairs, use_h5=False, h5_path=None
     cur_event = None
     global prev_artist_ids
     prev_artist_ids = []
-
-    # get the image:
-    # img_path = os.path.join(images_dir, f"{img_name}.jpg")
 
     if not use_h5:
         # loading a normal jpeg
@@ -109,18 +102,6 @@ def display_record(img_path, words, bboxes, qa_pairs, use_h5=False, h5_path=None
         vert_anchor = t2
         vert_offset_frac = 0.05
 
-        # if t1 < 0.1: # box is near the top, so annotate below
-        #     vert_offset_frac = -0.05
-        #     vert_anchor = b2 # drawing from bottom of bbox
-        # else: # annotate above
-        #     vert_offset_frac = 0.05
-        #     vert_anchor = t2 # drawing from top
-        #
-        # # offset by fraction of current axis ylim:
-        # cur_ylim = ax1.get_ylim()
-        # cur_ax_height = cur_ylim[0] - cur_ylim[1]
-        #
-        # vert_offset_px = vert_offset_frac * cur_ax_height
 
         # annotate with the corresponding string:
         labelbox = TextArea(words[i], textprops=dict(color='white', horizontalalignment='center'))
@@ -251,12 +232,12 @@ def inspect_img(img_name, images_dir, img_ocrs, img_questions, use_h5=False, h5_
         img_path = img_name
 
     # add filename extension if not present:
-    if '.jpg' not in img_name:
+    if image_ext not in img_name:
         img_prefix = img_name
-        img_filename = img_name + '.jpg'
-        img_path = img_path + '.jpg'
+        img_filename = img_name + image_ext
+        img_path = img_path + image_ext
     else:
-        img_prefix = img_name.split('.jpg')[0]
+        img_prefix = img_name.split(image_ext)[0]
         img_filename = img_name
 
     # and its OCR data:
@@ -327,7 +308,7 @@ def main():
             # last part of the filepath is the img name:
             img_name_ext = selection.split('/')[-1]
             # strip the .jpg extension:
-            img_name = img_name_ext.split('.jpg')[0]
+            img_name = img_name_ext.split(image_ext)[0]
 
         inspect_img(img_name, images_dir, img_ocrs, img_questions)
 
