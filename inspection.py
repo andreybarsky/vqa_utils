@@ -13,7 +13,7 @@ import os
 import pdb, ipdb
 
 from gui_utils import select_file
-from filepaths import imdb_dir, images_dir, h5_path
+from filepaths import imdb_dir, images_dir
 
 # # manually intercept argv to supply debug args:
 # sys.argv = ['train.py', '-d', 'PFL-DocVQA-local', '-m', 'VT5', ]# '--use_dp']
@@ -275,23 +275,7 @@ def main():
 
     print(f'Loading imdb...')
 
-    centralized = True
-    v1 = True
-    use_h5 = True
-
-    if v1:
-        prefix = 'blue'
-        val_name = 'valid'
-    else:
-        prefix = 'imdb'
-        val_name = 'val'
-
-    if (v1) or (not centralized):
-        imdb_files = [f"{prefix}_train_client_{i}.npy" for i in range(10)]
-    else:
-        imdb_files = [f"{prefix}_train.npy"]
-    imdb_files.append(f"{prefix}_{val_name}.npy")
-    imdb_files.append(f"{prefix}_test.npy")
+    imdb_files = [fname for fname in os.listdir(imdb_dir) if '.npy' in fname]
 
     all_data = []
     all_imdb = []
@@ -345,7 +329,7 @@ def main():
             # strip the .jpg extension:
             img_name = img_name_ext.split('.jpg')[0]
 
-        inspect_img(img_name, images_dir, img_ocrs, img_questions, use_h5=use_h5, h5_path=h5_path)
+        inspect_img(img_name, images_dir, img_ocrs, img_questions)
 
 if __name__ == '__main__':
     main()
